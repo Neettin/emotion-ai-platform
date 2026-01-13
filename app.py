@@ -24,7 +24,7 @@ def get_logo_base64():
 
 LOGO_BASE64 = get_logo_base64()
 
-# Clean & Attractive CSS - BLACK INPUT BACKGROUND
+# Clean & Attractive CSS
 st.markdown('''
 <style>
     /* Clean Dark Theme */
@@ -60,36 +60,21 @@ st.markdown('''
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
     
-    /* Input Field - BLACK BACKGROUND, WHITE TEXT */
+    /* Input Field */
     .stTextArea textarea {
-        background: #000000 !important; /* Pure black background */
-        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        background: #000000 !important;   /* Changed to Pure Black */
+        border: 2px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 15px !important;
-        color: #FFFFFF !important; /* White text */
+        color: white !important;
         font-size: 16px !important;
         padding: 20px !important;
         min-height: 150px !important;
-        caret-color: #7B68EE !important; /* Purple cursor */
-        transition: all 0.3s ease !important;
     }
     
-    /* Input field hover effect */
-    .stTextArea textarea:hover {
-        border-color: rgba(123, 104, 238, 0.5) !important;
-        box-shadow: 0 0 15px rgba(123, 104, 238, 0.1) !important;
-    }
-    
-    /* Input field focus effect */
     .stTextArea textarea:focus {
-        border-color: #7B68EE !important;
-        box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.3) !important;
-        outline: none !important;
-    }
-    
-    /* Placeholder text - light gray */
-    .stTextArea textarea::placeholder {
-        color: #AAAAAA !important;
-        opacity: 0.8 !important;
+        border-color: #7B68EE !important; /* Optional: specific purple for focus */
+        box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2) !important;
+        background: #000000 !important;   /* Keeps it black when typing */
     }
     
     /* Buttons */
@@ -192,45 +177,6 @@ st.markdown('''
         align-items: center;
         gap: 8px;
     }
-    
-    /* Mobile-specific fixes for black input */
-    @media (max-width: 768px) {
-        .stTextArea textarea {
-            background: #000000 !important;
-            color: #FFFFFF !important;
-            -webkit-text-fill-color: #FFFFFF !important;
-            font-size: 16px !important;
-            padding: 15px !important;
-        }
-        
-        .stTextArea textarea::placeholder {
-            color: #AAAAAA !important;
-            -webkit-text-fill-color: #AAAAAA !important;
-            opacity: 0.8 !important;
-        }
-        
-        /* Fix autofill on mobile */
-        .stTextArea textarea:-webkit-autofill,
-        .stTextArea textarea:-webkit-autofill:hover,
-        .stTextArea textarea:-webkit-autofill:focus {
-            -webkit-text-fill-color: #FFFFFF !important;
-            -webkit-box-shadow: 0 0 0px 1000px #000000 inset !important;
-            transition: background-color 5000s ease-in-out 0s !important;
-            border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        }
-        
-        .clean-card {
-            padding: 20px;
-        }
-        
-        h1 {
-            font-size: 2.5rem !important;
-        }
-        
-        .tagline-animation {
-            font-size: 1.2rem !important;
-        }
-    }
 </style>
 ''', unsafe_allow_html=True)
 
@@ -272,6 +218,16 @@ EMOTION_CONFIG = {
 # ======================
 
 with st.container():
+    # Decorative Elements
+    st.markdown('''
+    <div style="position: absolute; top: 20px; right: 20px; opacity: 0.1; font-size: 4rem; z-index: 0;">
+        🧠
+    </div>
+    <div style="position: absolute; top: 80px; left: 20px; opacity: 0.1; font-size: 3rem; z-index: 0;">
+        ⚡
+    </div>
+    ''', unsafe_allow_html=True)
+    
     # Main Header Container
     st.markdown('<div style="position: relative; z-index: 1;">', unsafe_allow_html=True)
     
@@ -360,44 +316,19 @@ with st.container():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================
-# INPUT SECTION WITH BLACK BACKGROUND
+# INPUT SECTION
 # ======================
 
 st.markdown('<div class="clean-card">', unsafe_allow_html=True)
 
-# Text Input with black background - FIXED: Added proper label
+# Text Input
 user_input = st.text_area(
-    label="Share your thoughts or feelings",  # Non-empty label
+    "Share your thoughts or feelings:",
     value=st.session_state.user_input,
     height=150,
     placeholder="Type your text here...\n\nExample: 'I feel incredibly happy today! Everything is going perfectly.'",
-    label_visibility="collapsed",  # Hide the label visually but it exists for accessibility
-    key="text_input_area"
+    label_visibility="collapsed"
 )
-
-# Visual confirmation of black background
-st.markdown('''
-<div style="
-    margin-top: 15px; 
-    padding: 12px; 
-    background: rgba(0, 0, 0, 0.3); 
-    border-radius: 10px; 
-    border-left: 4px solid #7B68EE;
-">
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <div style="
-            width: 20px; 
-            height: 20px; 
-            background: #000000; 
-            border: 2px solid #7B68EE; 
-            border-radius: 4px;
-        "></div>
-        <p style="color: #B0B0C0; font-size: 0.9rem; margin: 0;">
-            <strong>Input Style:</strong> Black background with white text for optimal visibility
-        </p>
-    </div>
-</div>
-''', unsafe_allow_html=True)
 
 # Analyze Button
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -410,6 +341,32 @@ with col2:
     )
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Handle analysis
+if analyze_clicked and user_input.strip():
+    st.session_state.user_input = user_input
+    
+    with st.spinner("🤖 Analyzing emotions with AI..."):
+        time.sleep(0.5)
+        
+        if model and vectorizer:
+            cleaned_text = preprocess_text(user_input)
+            vectorized_text = vectorizer.transform([cleaned_text])
+            prediction = model.predict(vectorized_text)[0]
+            emotion = num_to_emo[prediction]
+            probs = model.predict_proba(vectorized_text)[0]
+            
+            confidence = np.max(probs) * 100
+            complexity = np.std(probs) * 100
+            
+            st.session_state.analysis_result = {
+                'emotion': emotion,
+                'confidence': confidence,
+                'probs': probs,
+                'cleaned_text': cleaned_text,
+                'complexity': complexity,
+                'word_count': len(user_input.split())
+            }
 
 # ======================
 # RESULTS SECTION
@@ -553,7 +510,7 @@ with st.sidebar:
     
     st.divider()
     
-    # Quick Examples - FIXED: Added proper label handling
+    # Quick Examples
     st.markdown('<p style="color: #B0B0C0; margin-bottom: 15px; font-weight: 600;">💡 Try these examples:</p>', unsafe_allow_html=True)
     
     examples = [
@@ -565,60 +522,19 @@ with st.sidebar:
         ("I'm scared about this", "😨 Fear")
     ]
     
-    for idx, (text, emoji_label) in enumerate(examples):
-        # Create a unique key for each button
-        button_key = f"ex_btn_{idx}"
-        if st.button(f"{emoji_label}: {text[:20]}...", 
-                    key=button_key, 
-                    use_container_width=True):
-            # Update session state with the example text
+    for text, emoji_label in examples:
+        if st.button(f"{emoji_label}: {text[:20]}...", key=f"ex_{text[:10]}", use_container_width=True):
             st.session_state.user_input = text
             st.session_state.analysis_result = None
-            # Use st.rerun() to refresh the page
             st.rerun()
     
     st.divider()
     
     # Clear button
-    if st.button("🗑️ Clear Analysis", 
-                key="clear_btn", 
-                use_container_width=True):
+    if st.button("🗑️ Clear Analysis", use_container_width=True, key="clear_btn"):
         st.session_state.user_input = ""
         st.session_state.analysis_result = None
         st.rerun()
-    
-    st.divider()
-    
-    # Visual Style Indicator
-    st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-weight: 600;">🎨 Input Style</p>', unsafe_allow_html=True)
-    st.markdown('''
-    <div style="
-        background: rgba(0, 0, 0, 0.3); 
-        padding: 15px; 
-        border-radius: 10px; 
-        margin-bottom: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    ">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-            <div style="
-                width: 40px; 
-                height: 40px; 
-                background: #000000; 
-                border: 2px solid #FFFFFF; 
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            ">
-                <span style="color: #FFFFFF; font-weight: bold;">A</span>
-            </div>
-            <div>
-                <p style="color: #FFFFFF; font-weight: 600; margin: 0; font-size: 1rem;">Black Background</p>
-                <p style="color: #B0B0C0; margin: 0; font-size: 0.8rem;">White text for maximum contrast</p>
-            </div>
-        </div>
-    </div>
-    ''', unsafe_allow_html=True)
     
     st.divider()
     
@@ -644,45 +560,6 @@ with st.sidebar:
         </p>
     </div>
     ''', unsafe_allow_html=True)
-
-# ======================
-# HANDLE ANALYSIS WHEN BUTTON IS CLICKED
-# ======================
-
-# Check if analyze button was clicked (moved to bottom for better flow)
-if 'analyze_clicked' not in st.session_state:
-    st.session_state.analyze_clicked = False
-
-# Check if we should analyze based on button click or example selection
-if analyze_clicked and user_input.strip():
-    st.session_state.user_input = user_input
-    st.session_state.analyze_clicked = True
-
-# Perform analysis if needed
-if st.session_state.analyze_clicked and st.session_state.user_input:
-    with st.spinner("🤖 Analyzing emotions with AI..."):
-        time.sleep(0.5)
-        
-        if model and vectorizer:
-            cleaned_text = preprocess_text(st.session_state.user_input)
-            vectorized_text = vectorizer.transform([cleaned_text])
-            prediction = model.predict(vectorized_text)[0]
-            emotion = num_to_emo[prediction]
-            probs = model.predict_proba(vectorized_text)[0]
-            
-            confidence = np.max(probs) * 100
-            complexity = np.std(probs) * 100
-            
-            st.session_state.analysis_result = {
-                'emotion': emotion,
-                'confidence': confidence,
-                'probs': probs,
-                'cleaned_text': cleaned_text,
-                'complexity': complexity,
-                'word_count': len(st.session_state.user_input.split())
-            }
-        
-        st.session_state.analyze_clicked = False
 
 # ======================
 # FOOTER WITH MODEL INFO
