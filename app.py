@@ -24,7 +24,7 @@ def get_logo_base64():
 
 LOGO_BASE64 = get_logo_base64()
 
-# Clean & Attractive CSS - FIXED FOR MOBILE INPUT TEXT
+# Clean & Attractive CSS - BLACK INPUT BACKGROUND
 st.markdown('''
 <style>
     /* Clean Dark Theme */
@@ -60,52 +60,36 @@ st.markdown('''
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
     
-    /* Input Field - FIXED FOR MOBILE */
+    /* Input Field - BLACK BACKGROUND, WHITE TEXT */
     .stTextArea textarea {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 2px solid rgba(255, 255, 255, 0.15) !important;
+        background: #000000 !important; /* Pure black background */
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 15px !important;
-        color: #FFFFFF !important; /* Force white text */
+        color: #FFFFFF !important; /* White text */
         font-size: 16px !important;
         padding: 20px !important;
         min-height: 150px !important;
-        caret-color: #7B68EE !important; /* Cursor color */
+        caret-color: #7B68EE !important; /* Purple cursor */
+        transition: all 0.3s ease !important;
     }
     
-    /* Placeholder text color */
-    .stTextArea textarea::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
+    /* Input field hover effect */
+    .stTextArea textarea:hover {
+        border-color: rgba(123, 104, 238, 0.5) !important;
+        box-shadow: 0 0 15px rgba(123, 104, 238, 0.1) !important;
     }
     
+    /* Input field focus effect */
     .stTextArea textarea:focus {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2) !important;
+        border-color: #7B68EE !important;
+        box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.3) !important;
         outline: none !important;
     }
     
-    /* Mobile-specific fixes */
-    @media (max-width: 768px) {
-        .stTextArea textarea {
-            color: #FFFFFF !important;
-            -webkit-text-fill-color: #FFFFFF !important; /* For iOS */
-            font-size: 16px !important;
-            padding: 15px !important;
-        }
-        
-        .stTextArea textarea::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-            -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
-            opacity: 1 !important; /* Fix placeholder opacity on iOS */
-        }
-        
-        /* Fix for autofill backgrounds on mobile */
-        .stTextArea textarea:-webkit-autofill,
-        .stTextArea textarea:-webkit-autofill:hover,
-        .stTextArea textarea:-webkit-autofill:focus {
-            -webkit-text-fill-color: #FFFFFF !important;
-            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.08) inset !important;
-            transition: background-color 5000s ease-in-out 0s !important;
-        }
+    /* Placeholder text - light gray */
+    .stTextArea textarea::placeholder {
+        color: #AAAAAA !important;
+        opacity: 0.8 !important;
     }
     
     /* Buttons */
@@ -209,11 +193,34 @@ st.markdown('''
         gap: 8px;
     }
     
-    /* Additional mobile optimizations */
+    /* Mobile-specific fixes for black input */
     @media (max-width: 768px) {
+        .stTextArea textarea {
+            background: #000000 !important;
+            color: #FFFFFF !important;
+            -webkit-text-fill-color: #FFFFFF !important;
+            font-size: 16px !important;
+            padding: 15px !important;
+        }
+        
+        .stTextArea textarea::placeholder {
+            color: #AAAAAA !important;
+            -webkit-text-fill-color: #AAAAAA !important;
+            opacity: 0.8 !important;
+        }
+        
+        /* Fix autofill on mobile */
+        .stTextArea textarea:-webkit-autofill,
+        .stTextArea textarea:-webkit-autofill:hover,
+        .stTextArea textarea:-webkit-autofill:focus {
+            -webkit-text-fill-color: #FFFFFF !important;
+            -webkit-box-shadow: 0 0 0px 1000px #000000 inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
         .clean-card {
             padding: 20px;
-            margin: 10px 0;
         }
         
         h1 {
@@ -222,11 +229,6 @@ st.markdown('''
         
         .tagline-animation {
             font-size: 1.2rem !important;
-        }
-        
-        .simple-metric {
-            padding: 15px;
-            margin-bottom: 10px;
         }
     }
 </style>
@@ -358,15 +360,15 @@ with st.container():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================
-# INPUT SECTION
+# INPUT SECTION WITH BLACK BACKGROUND
 # ======================
 
 st.markdown('<div class="clean-card">', unsafe_allow_html=True)
 
-# Text Input - Using custom HTML for better mobile control
-st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-size: 1.1rem;">Share your thoughts or feelings:</p>', unsafe_allow_html=True)
+# Text Input Label
+st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-size: 1.1rem; font-weight: 500;">📝 Share your thoughts or feelings:</p>', unsafe_allow_html=True)
 
-# Use Streamlit's text_area with proper styling
+# Text Input with black background
 user_input = st.text_area(
     label="",
     value=st.session_state.user_input,
@@ -376,18 +378,27 @@ user_input = st.text_area(
     key="text_input_area"
 )
 
-# Add a note about mobile visibility
+# Visual confirmation of black background
 st.markdown('''
 <div style="
-    margin-top: 10px; 
-    padding: 10px; 
-    background: rgba(123, 104, 238, 0.1); 
+    margin-top: 15px; 
+    padding: 12px; 
+    background: rgba(0, 0, 0, 0.3); 
     border-radius: 10px; 
     border-left: 4px solid #7B68EE;
 ">
-    <p style="color: #B0B0C0; font-size: 0.9rem; margin: 0;">
-        💡 <strong>Tip:</strong> Text is white on dark background. If invisible on mobile, try reloading the page.
-    </p>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="
+            width: 20px; 
+            height: 20px; 
+            background: #000000; 
+            border: 2px solid #7B68EE; 
+            border-radius: 4px;
+        "></div>
+        <p style="color: #B0B0C0; font-size: 0.9rem; margin: 0;">
+            <strong>Input Style:</strong> Black background with white text for optimal visibility
+        </p>
+    </div>
 </div>
 ''', unsafe_allow_html=True)
 
@@ -584,7 +595,7 @@ with st.sidebar:
     ]
     
     for text, emoji_label in examples:
-        if st.button(f"{emoji_label}: {text[:20]}...", key=f"ex_{text[:10]}", use_container_width=True):
+        if st.button(f"{emoji_label}: {text[:20]}...", key=f"ex_{hash(text)}", use_container_width=True):
             st.session_state.user_input = text
             st.session_state.analysis_result = None
             st.rerun()
@@ -599,15 +610,34 @@ with st.sidebar:
     
     st.divider()
     
-    # Mobile Help Section
-    st.markdown('<p style="color: #B0B0C0; margin-bottom: 15px; font-weight: 600;">📱 Mobile Tips</p>', unsafe_allow_html=True)
+    # Visual Style Indicator
+    st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-weight: 600;">🎨 Input Style</p>', unsafe_allow_html=True)
     st.markdown('''
-    <div style="background: rgba(123, 104, 238, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px;">
-        <p style="color: #B0B0C0; font-size: 0.85rem; margin: 0;">
-            • Text should be <strong>white</strong> in input box<br>
-            • If invisible, <strong>reload page</strong><br>
-            • Use landscape mode for better view
-        </p>
+    <div style="
+        background: rgba(0, 0, 0, 0.3); 
+        padding: 15px; 
+        border-radius: 10px; 
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    ">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+            <div style="
+                width: 40px; 
+                height: 40px; 
+                background: #000000; 
+                border: 2px solid #FFFFFF; 
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="color: #FFFFFF; font-weight: bold;">A</span>
+            </div>
+            <div>
+                <p style="color: #FFFFFF; font-weight: 600; margin: 0; font-size: 1rem;">Black Background</p>
+                <p style="color: #B0B0C0; margin: 0; font-size: 0.8rem;">White text for maximum contrast</p>
+            </div>
+        </div>
     </div>
     ''', unsafe_allow_html=True)
     
