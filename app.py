@@ -24,7 +24,7 @@ def get_logo_base64():
 
 LOGO_BASE64 = get_logo_base64()
 
-# Clean & Attractive CSS
+# Clean & Attractive CSS - FIXED FOR MOBILE INPUT TEXT
 st.markdown('''
 <style>
     /* Clean Dark Theme */
@@ -60,20 +60,52 @@ st.markdown('''
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
     
-    /* Input Field */
+    /* Input Field - FIXED FOR MOBILE */
     .stTextArea textarea {
         background: rgba(255, 255, 255, 0.08) !important;
         border: 2px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 15px !important;
-        color: white !important;
+        color: #FFFFFF !important; /* Force white text */
         font-size: 16px !important;
         padding: 20px !important;
         min-height: 150px !important;
+        caret-color: #7B68EE !important; /* Cursor color */
+    }
+    
+    /* Placeholder text color */
+    .stTextArea textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
     }
     
     .stTextArea textarea:focus {
         border-color: var(--primary) !important;
         box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2) !important;
+        outline: none !important;
+    }
+    
+    /* Mobile-specific fixes */
+    @media (max-width: 768px) {
+        .stTextArea textarea {
+            color: #FFFFFF !important;
+            -webkit-text-fill-color: #FFFFFF !important; /* For iOS */
+            font-size: 16px !important;
+            padding: 15px !important;
+        }
+        
+        .stTextArea textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+            -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+            opacity: 1 !important; /* Fix placeholder opacity on iOS */
+        }
+        
+        /* Fix for autofill backgrounds on mobile */
+        .stTextArea textarea:-webkit-autofill,
+        .stTextArea textarea:-webkit-autofill:hover,
+        .stTextArea textarea:-webkit-autofill:focus {
+            -webkit-text-fill-color: #FFFFFF !important;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.08) inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
     }
     
     /* Buttons */
@@ -176,6 +208,27 @@ st.markdown('''
         align-items: center;
         gap: 8px;
     }
+    
+    /* Additional mobile optimizations */
+    @media (max-width: 768px) {
+        .clean-card {
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem !important;
+        }
+        
+        .tagline-animation {
+            font-size: 1.2rem !important;
+        }
+        
+        .simple-metric {
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+    }
 </style>
 ''', unsafe_allow_html=True)
 
@@ -217,16 +270,6 @@ EMOTION_CONFIG = {
 # ======================
 
 with st.container():
-    # Decorative Elements
-    st.markdown('''
-    <div style="position: absolute; top: 20px; right: 20px; opacity: 0.1; font-size: 4rem; z-index: 0;">
-        🧠
-    </div>
-    <div style="position: absolute; top: 80px; left: 20px; opacity: 0.1; font-size: 3rem; z-index: 0;">
-        ⚡
-    </div>
-    ''', unsafe_allow_html=True)
-    
     # Main Header Container
     st.markdown('<div style="position: relative; z-index: 1;">', unsafe_allow_html=True)
     
@@ -320,14 +363,33 @@ with st.container():
 
 st.markdown('<div class="clean-card">', unsafe_allow_html=True)
 
-# Text Input
+# Text Input - Using custom HTML for better mobile control
+st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-size: 1.1rem;">Share your thoughts or feelings:</p>', unsafe_allow_html=True)
+
+# Use Streamlit's text_area with proper styling
 user_input = st.text_area(
-    "Share your thoughts or feelings:",
+    label="",
     value=st.session_state.user_input,
     height=150,
     placeholder="Type your text here...\n\nExample: 'I feel incredibly happy today! Everything is going perfectly.'",
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key="text_input_area"
 )
+
+# Add a note about mobile visibility
+st.markdown('''
+<div style="
+    margin-top: 10px; 
+    padding: 10px; 
+    background: rgba(123, 104, 238, 0.1); 
+    border-radius: 10px; 
+    border-left: 4px solid #7B68EE;
+">
+    <p style="color: #B0B0C0; font-size: 0.9rem; margin: 0;">
+        💡 <strong>Tip:</strong> Text is white on dark background. If invisible on mobile, try reloading the page.
+    </p>
+</div>
+''', unsafe_allow_html=True)
 
 # Analyze Button
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -534,6 +596,20 @@ with st.sidebar:
         st.session_state.user_input = ""
         st.session_state.analysis_result = None
         st.rerun()
+    
+    st.divider()
+    
+    # Mobile Help Section
+    st.markdown('<p style="color: #B0B0C0; margin-bottom: 15px; font-weight: 600;">📱 Mobile Tips</p>', unsafe_allow_html=True)
+    st.markdown('''
+    <div style="background: rgba(123, 104, 238, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px;">
+        <p style="color: #B0B0C0; font-size: 0.85rem; margin: 0;">
+            • Text should be <strong>white</strong> in input box<br>
+            • If invisible, <strong>reload page</strong><br>
+            • Use landscape mode for better view
+        </p>
+    </div>
+    ''', unsafe_allow_html=True)
     
     st.divider()
     
