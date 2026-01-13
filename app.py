@@ -365,16 +365,13 @@ with st.container():
 
 st.markdown('<div class="clean-card">', unsafe_allow_html=True)
 
-# Text Input Label
-st.markdown('<p style="color: #B0B0C0; margin-bottom: 10px; font-size: 1.1rem; font-weight: 500;">📝 Share your thoughts or feelings:</p>', unsafe_allow_html=True)
-
-# Text Input with black background
+# Text Input with black background - FIXED: Added proper label
 user_input = st.text_area(
-    label="",
+    label="Share your thoughts or feelings",  # Non-empty label
     value=st.session_state.user_input,
     height=150,
     placeholder="Type your text here...\n\nExample: 'I feel incredibly happy today! Everything is going perfectly.'",
-    label_visibility="collapsed",
+    label_visibility="collapsed",  # Hide the label visually but it exists for accessibility
     key="text_input_area"
 )
 
@@ -413,32 +410,6 @@ with col2:
     )
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-# Handle analysis
-if analyze_clicked and user_input.strip():
-    st.session_state.user_input = user_input
-    
-    with st.spinner("🤖 Analyzing emotions with AI..."):
-        time.sleep(0.5)
-        
-        if model and vectorizer:
-            cleaned_text = preprocess_text(user_input)
-            vectorized_text = vectorizer.transform([cleaned_text])
-            prediction = model.predict(vectorized_text)[0]
-            emotion = num_to_emo[prediction]
-            probs = model.predict_proba(vectorized_text)[0]
-            
-            confidence = np.max(probs) * 100
-            complexity = np.std(probs) * 100
-            
-            st.session_state.analysis_result = {
-                'emotion': emotion,
-                'confidence': confidence,
-                'probs': probs,
-                'cleaned_text': cleaned_text,
-                'complexity': complexity,
-                'word_count': len(user_input.split())
-            }
 
 # ======================
 # RESULTS SECTION
@@ -582,7 +553,7 @@ with st.sidebar:
     
     st.divider()
     
-    # Quick Examples
+    # Quick Examples - FIXED: Added proper label handling
     st.markdown('<p style="color: #B0B0C0; margin-bottom: 15px; font-weight: 600;">💡 Try these examples:</p>', unsafe_allow_html=True)
     
     examples = [
@@ -594,16 +565,24 @@ with st.sidebar:
         ("I'm scared about this", "😨 Fear")
     ]
     
-    for text, emoji_label in examples:
-        if st.button(f"{emoji_label}: {text[:20]}...", key=f"ex_{hash(text)}", use_container_width=True):
+    for idx, (text, emoji_label) in enumerate(examples):
+        # Create a unique key for each button
+        button_key = f"ex_btn_{idx}"
+        if st.button(f"{emoji_label}: {text[:20]}...", 
+                    key=button_key, 
+                    use_container_width=True):
+            # Update session state with the example text
             st.session_state.user_input = text
             st.session_state.analysis_result = None
+            # Use st.rerun() to refresh the page
             st.rerun()
     
     st.divider()
     
     # Clear button
-    if st.button("🗑️ Clear Analysis", use_container_width=True, key="clear_btn"):
+    if st.button("🗑️ Clear Analysis", 
+                key="clear_btn", 
+                use_container_width=True):
         st.session_state.user_input = ""
         st.session_state.analysis_result = None
         st.rerun()
@@ -665,6 +644,45 @@ with st.sidebar:
         </p>
     </div>
     ''', unsafe_allow_html=True)
+
+# ======================
+# HANDLE ANALYSIS WHEN BUTTON IS CLICKED
+# ======================
+
+# Check if analyze button was clicked (moved to bottom for better flow)
+if 'analyze_clicked' not in st.session_state:
+    st.session_state.analyze_clicked = False
+
+# Check if we should analyze based on button click or example selection
+if analyze_clicked and user_input.strip():
+    st.session_state.user_input = user_input
+    st.session_state.analyze_clicked = True
+
+# Perform analysis if needed
+if st.session_state.analyze_clicked and st.session_state.user_input:
+    with st.spinner("🤖 Analyzing emotions with AI..."):
+        time.sleep(0.5)
+        
+        if model and vectorizer:
+            cleaned_text = preprocess_text(st.session_state.user_input)
+            vectorized_text = vectorizer.transform([cleaned_text])
+            prediction = model.predict(vectorized_text)[0]
+            emotion = num_to_emo[prediction]
+            probs = model.predict_proba(vectorized_text)[0]
+            
+            confidence = np.max(probs) * 100
+            complexity = np.std(probs) * 100
+            
+            st.session_state.analysis_result = {
+                'emotion': emotion,
+                'confidence': confidence,
+                'probs': probs,
+                'cleaned_text': cleaned_text,
+                'complexity': complexity,
+                'word_count': len(st.session_state.user_input.split())
+            }
+        
+        st.session_state.analyze_clicked = False
 
 # ======================
 # FOOTER WITH MODEL INFO
